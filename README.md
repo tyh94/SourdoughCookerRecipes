@@ -9,7 +9,7 @@ List of my recipes for app
 
 | файл | что внутри |
 |---|---|
-| `foods.nutrients.json` | USDA, названия переведены на русский |
+| `foods.nutrients.json` | USDA Foundation Foods, 363 продукта, названия переведены на русский |
 | `matvaretabellen.nutrients.json` | норвежская таблица Mattilsynet, 2121 продукт |
 
 ### Обновить норвежскую таблицу
@@ -29,16 +29,18 @@ python3 matvaretabellen.py
 
 ### Обновить таблицу USDA
 
-```
-python3 usda.py FoodData_Central_foundation_food_json_2025-12-18.json foods.nutrients.json
-```
-
-Исходник качается руками с [FoodData Central](https://fdc.nal.usda.gov/download-datasets)
-(Foundation Foods, JSON) и в репозиторий не кладётся — нужен только результат.
-
-Названия в USDA только английские, поэтому скрипт переводит их на русский локальным
-LibreTranslate, который надо поднять заранее:
+Названия в USDA только английские, поэтому сначала поднимаем переводчик:
 
 ```
 docker run -p 5001:5000 libretranslate/libretranslate
+python3 usda.py
 ```
+
+Скрипт сам находит свежий релиз Foundation Foods на
+[странице загрузок](https://fdc.nal.usda.gov/download-datasets), качает архив в память и
+разбирает его: сам дамп (6.7 МБ) в репозиторий не кладётся. Уже скачанный можно подсунуть
+через `--input`.
+
+Если LibreTranslate не отвечает, скрипт останавливается сразу, ещё до скачивания:
+английское название, молча оставшееся в поле `ru`, доехало бы до приложения и выглядело
+бы там как настоящий перевод.

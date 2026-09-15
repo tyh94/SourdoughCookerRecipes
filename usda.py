@@ -4,21 +4,24 @@
 Переехал из FamilyFoodDiary/NutritionAPI: логика сборки индексов живёт рядом
 с самими индексами.
 
-    python3 usda.py FoodData_Central_foundation_food_json_2025-12-18.json foods.nutrients.json
+    python3 usda.py
 
-Исходник качается с https://fdc.nal.usda.gov/download-datasets (Foundation Foods, JSON)
-и в репозиторий не кладётся: 6.8 МБ входных данных, из которых нужен только результат.
+Свежий релиз Foundation Foods скрипт находит сам на странице загрузок и качает в
+память: сам дамп в репозиторий не кладётся, нужен только результат.
 
 Названия переводятся на русский через локальный LibreTranslate, поэтому перед запуском:
 
     docker run -p 5001:5000 libretranslate/libretranslate
-
-Зависимости: pip install requests
 """
+import argparse
+import io
 import json
+import re
 import sys
+import urllib.error
+import urllib.request
+import zipfile
 
-import requests
 import time
 from typing import Dict, List, Any
 from dataclasses import dataclass
@@ -26,7 +29,9 @@ from enum import Enum
 
 LT_URL = "http://localhost:5001/translate"
 
-DEFAULT_INPUT = "FoodData_Central_foundation_food_json_2025-12-18.json"
+DOWNLOADS_PAGE = "https://fdc.nal.usda.gov/download-datasets"
+DATASET_URL = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_%s.zip"
+DATASET_RE = re.compile(r"FoodData_Central_foundation_food_json_(\d{4}-\d{2}-\d{2})\.zip")
 DEFAULT_OUTPUT = "foods.nutrients.json"
 
 class NutrientType(Enum):
@@ -37,6 +42,8 @@ class NutrientType(Enum):
     CARBS = "carbs"
     FIBER = "fiber"
     SUGAR = "sugar"
+    FRUCTOSE = "fructose"
+    LACTOSE = "lactose"
     
     # Минералы
     CALCIUM = "calcium"
@@ -102,6 +109,8 @@ NUTRIENT_MAPPING = {
     "Carbohydrate, by difference": NutrientType.CARBS,
     "Fiber, total dietary": NutrientType.FIBER,
     "Sugars, Total": NutrientType.SUGAR,
+    "Fructose": NutrientType.FRUCTOSE,
+    "Lactose": NutrientType.LACTOSE,
     
     # Минералы
     "Calcium, Ca": NutrientType.CALCIUM,
@@ -171,8 +180,16 @@ class Serving:
             "description": self.description
         }
 
+class TranslationError(RuntimeError):
+    """Перевод не удался."""
+
+
 def translate_text(text: str, source: str = "auto", target: str = "ru", max_retries: int = 3) -> str:
-    """Переводит текст через LibreTranslate"""
+    """Переводит текст через LibreTranslate.
+
+    Падает, если не смог: английское название, молча оставшееся в поле `ru`,
+    доедет до приложения и будет выглядеть как настоящий перевод.
+    """
     if not text or text.strip() == "":
         return text
     
@@ -185,22 +202,94 @@ def translate_text(text: str, source: str = "auto", target: str = "ru", max_retr
         "api_key": ""
     }
     
+    request = urllib.request.Request(
+        LT_URL,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+
+    last_error = "неизвестно"
     for attempt in range(max_retries):
         try:
-            response = requests.post(LT_URL, json=payload, timeout=30)
-            if response.status_code == 200:
-                result = response.json()
-                return result.get("translatedText", text)
-            elif response.status_code == 429:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                translated = json.load(response).get("translatedText")
+            if translated:
+                return translated
+            last_error = "в ответе нет translatedText"
+        except urllib.error.HTTPError as e:
+            last_error = f"HTTP {e.code}: {e.read()[:100].decode('utf-8', 'replace')}"
+            if e.code == 429:
                 time.sleep(2 ** attempt)  # Экспоненциальная задержка
-            else:
-                print(f"Ошибка HTTP {response.status_code}: {response.text[:100]}")
-        except Exception as e:
-            print(f"Ошибка перевода '{text[:50]}...': {e}")
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            last_error = str(e)
             if attempt < max_retries - 1:
                 time.sleep(1)
     
-    return text
+    raise TranslationError(f"не перевести «{text[:60]}»: {last_error}")
+
+
+def check_translator():
+    """Проверяем перевод до скачивания дампа, чтобы не падать на середине."""
+    try:
+        translate_text("water")
+    except TranslationError as error:
+        sys.exit(
+            f"LibreTranslate не отвечает — {error}\n"
+            "Подними его: docker run -p 5001:5000 libretranslate/libretranslate"
+        )
+
+
+def latest_release() -> str:
+    """Дата свежего релиза Foundation Foods со страницы загрузок."""
+    try:
+        with urllib.request.urlopen(DOWNLOADS_PAGE, timeout=60) as response:
+            page = response.read().decode("utf-8", "replace")
+    except (urllib.error.URLError, TimeoutError) as error:
+        sys.exit(f"Не открылась страница загрузок {DOWNLOADS_PAGE}: {error}")
+
+    # Даты в формате ISO, поэтому свежая — последняя по алфавиту.
+    releases = sorted(set(DATASET_RE.findall(page)))
+    if not releases:
+        sys.exit("На странице загрузок нет Foundation Foods в JSON — поменялась разметка.")
+    return releases[-1]
+
+
+def download_foods() -> List[Dict]:
+    """Качает свежий релиз и достаёт из архива единственный JSON."""
+    release = latest_release()
+    url = DATASET_URL % release
+    print(f"Качаю релиз {release}: {url}")
+    try:
+        with urllib.request.urlopen(url, timeout=300) as response:
+            archive = zipfile.ZipFile(io.BytesIO(response.read()))
+    except (urllib.error.URLError, TimeoutError, zipfile.BadZipFile) as error:
+        sys.exit(f"Не скачался {url}: {error}")
+
+    names = [name for name in archive.namelist() if name.endswith(".json")]
+    if not names:
+        sys.exit(f"В архиве {url} нет JSON — поменялся формат выгрузки.")
+    with archive.open(names[0]) as raw:
+        return foods_of(json.load(raw))
+
+
+def read_foods(path: str) -> List[Dict]:
+    with open(path, "r", encoding="utf-8") as f:
+        return foods_of(json.load(f))
+
+
+def foods_of(data: Dict) -> List[Dict]:
+    """Продукты из выгрузки.
+
+    В хвосте выгрузки попадаются пустые записи (в релизе 2026-04-30 их 32) —
+    пропускаем, но вслух: если однажды пустой окажется вся выгрузка, это будет видно.
+    """
+    foods = data.get("FoundationFoods")
+    if not foods:
+        sys.exit("В дампе нет FoundationFoods — поменялся формат выгрузки.")
+    real = [food for food in foods if isinstance(food, dict)]
+    if len(real) != len(foods):
+        print(f"Пустых записей: {len(foods) - len(real)} из {len(foods)} — пропускаю")
+    return real
 
 def extract_nutrients(food_data: Dict) -> Dict[str, float]:
     """Извлекает нутриенты из данных USDA"""
@@ -271,83 +360,66 @@ def extract_servings(food_data: Dict) -> List[Serving]:
     
     return servings
 
-def convert_usda_to_target_format(input_file: str, output_file: str):
+def convert(foods: List[Dict], output_file: str):
     """Основная функция конвертации"""
-    # Загружаем данные USDA
-    with open(input_file, 'r', encoding='utf-8') as f:
-        usda_data = json.load(f)
-    
     results = []
-    
-    if "FoundationFoods" not in usda_data:
-        print("Ошибка: Не найден ключ 'FoundationFoods' в JSON")
-        return
-    
-    foods = usda_data["FoundationFoods"]
     total_foods = len(foods)
     
     print(f"Найдено продуктов: {total_foods}")
     
     for idx, food_data in enumerate(foods, 1):
-        try:
-            print(f"Обработка продукта {idx}/{total_foods}: {food_data.get('description', 'N/A')}")
+        print(f"Обработка продукта {idx}/{total_foods}: {food_data.get('description', 'N/A')}")
+        
+        # Получаем ID
+        fdc_id = str(food_data.get("fdcId", ""))
+        
+        # Получаем название на английском
+        name_en = food_data.get("description", "")
+        
+        # Переводим название
+        name_ru = translate_text(name_en)
+        
+        # Извлекаем нутриенты
+        nutrients = extract_nutrients(food_data)
+        
+        # Извлекаем порции
+        servings = extract_servings(food_data)
+        
+        # Переводим названия порций
+        translated_servings = []
+        for serving in servings:
+            # Переводим название порции если нужно
+            translated_name = translate_text(serving.name) if serving.name else serving.name
+            translated_desc = translate_text(serving.description) if serving.description else serving.description
             
-            # Получаем ID
-            fdc_id = str(food_data.get("fdcId", ""))
-            
-            # Получаем название на английском
-            name_en = food_data.get("description", "")
-            
-            # Переводим название
-            name_ru = translate_text(name_en)
-            
-            # Извлекаем нутриенты
-            nutrients = extract_nutrients(food_data)
-            
-            # Извлекаем порции
-            servings = extract_servings(food_data)
-            
-            # Переводим названия порций
-            translated_servings = []
-            for serving in servings:
-                # Переводим название порции если нужно
-                translated_name = translate_text(serving.name) if serving.name else serving.name
-                translated_desc = translate_text(serving.description) if serving.description else serving.description
-                
-                translated_servings.append({
-                    "id": serving.id,
-                    "name": translated_name,
-                    "weight": serving.weight,
-                    "description": translated_desc
-                })
-            
-            # Создаем результат.
-            # names — словарь «код языка → название»; при добавлении нового
-            # языка просто дописывается ключ ("de", "es", ...).
-            result = {
-                "id": fdc_id,
-                "names": {
-                    "ru": name_ru,
-                    "en": name_en,
-                },
-                "nutrients": nutrients,
-                "servings": translated_servings,
-                "metadata": {
-                    "original_name": name_en,
-                    "foodCategory": food_data.get("foodCategory", {}).get("description", ""),
-                    "dataType": food_data.get("dataType", "")
-                }
+            translated_servings.append({
+                "id": serving.id,
+                "name": translated_name,
+                "weight": serving.weight,
+                "description": translated_desc
+            })
+        
+        # Создаем результат.
+        # names — словарь «код языка → название»; при добавлении нового
+        # языка просто дописывается ключ ("de", "es", ...).
+        results.append({
+            "id": fdc_id,
+            "names": {
+                "ru": name_ru,
+                "en": name_en,
+            },
+            "nutrients": nutrients,
+            "servings": translated_servings,
+            "metadata": {
+                "original_name": name_en,
+                "foodCategory": food_data.get("foodCategory", {}).get("description", ""),
+                "dataType": food_data.get("dataType", "")
             }
-            
-            results.append(result)
-            
-            # Небольшая задержка чтобы не перегружать сервер перевода
-            if idx % 5 == 0:
-                time.sleep(0.5)
-                
-        except Exception as e:
-            print(f"Ошибка при обработке продукта {idx}: {e}")
-            continue
+        })
+        
+        # Небольшая задержка чтобы не перегружать сервер перевода
+        if idx % 5 == 0:
+            time.sleep(0.5)
     
     # Сохраняем результат
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -362,19 +434,17 @@ def convert_usda_to_target_format(input_file: str, output_file: str):
     print(f"  Всего порций найдено: {sum(len(r['servings']) for r in results)}")
 
 def main():
-    """Основная функция"""
-    # Пути приходят аргументами: скрипт запускается из корня репозитория.
-    input_file = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_INPUT
-    output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT
-    
-    try:
-        convert_usda_to_target_format(input_file, output_file)
-    except FileNotFoundError:
-        print(f"Ошибка: Файл {input_file} не найден")
-    except json.JSONDecodeError:
-        print(f"Ошибка: Неверный формат JSON в файле {input_file}")
-    except Exception as e:
-        print(f"Неизвестная ошибка: {e}")
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("output", nargs="?", default=DEFAULT_OUTPUT, help="куда записать JSON")
+    parser.add_argument("--input", help="взять уже скачанный дамп вместо свежего релиза")
+    args = parser.parse_args()
+
+    check_translator()
+    foods = read_foods(args.input) if args.input else download_foods()
+    if not foods:
+        sys.exit("В дампе нет продуктов — похоже, поменялся формат выгрузки.")
+    convert(foods, args.output)
+
 
 if __name__ == "__main__":
     main()
