@@ -54,3 +54,10 @@ playground.xcworkspace
 *.moved-aside
 *.xcuserstate
 *.xcscmblueprint
+
+### Python
+__pycache__/
+.venv/
+
+# Исходники USDA качаются руками, в репозитории лежит только результат
+FoodData_Central_*.json

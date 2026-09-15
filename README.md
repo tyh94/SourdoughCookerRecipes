@@ -26,3 +26,19 @@ python3 matvaretabellen.py
 и их стоит добавить в словарь `EUROFIR` в скрипте.
 
 Источник просит ссылаться на себя: «Matvaretabellen, Mattilsynet».
+
+### Обновить таблицу USDA
+
+```
+python3 usda.py FoodData_Central_foundation_food_json_2025-12-18.json foods.nutrients.json
+```
+
+Исходник качается руками с [FoodData Central](https://fdc.nal.usda.gov/download-datasets)
+(Foundation Foods, JSON) и в репозиторий не кладётся — нужен только результат.
+
+Названия в USDA только английские, поэтому скрипт переводит их на русский локальным
+LibreTranslate, который надо поднять заранее:
+
+```
+docker run -p 5001:5000 libretranslate/libretranslate
+```
