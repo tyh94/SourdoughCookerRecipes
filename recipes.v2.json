@@ -687,7 +687,7 @@
             "ru": "Молоко",
             "en": "Milk"
           },
-          "category": "other",
+          "category": "water",
           "inputMode": "grams",
           "value": 25
         }
