@@ -7,6 +7,7 @@
         "ru": "Тартин на закваске",
         "en": "Sourdough Tartine"
       },
+      "kind": "bread",
       "ingredients": [
         {
           "id": "550e8400-e29b-41d4-a716-446655440001",
@@ -306,6 +307,7 @@
         "ru": "Пшеничный хлеб с гречневыми хлопьями",
         "en": "Wheat bread with buckwheat flakes"
       },
+      "kind": "bread",
       "sourceURL": "https://www.instagram.com/reel/DazrBEbos1x",
       "ingredients": [
         {
@@ -386,7 +388,11 @@
           },
           "category": "other",
           "inputMode": "grams",
-          "value": 75
+          "value": 75,
+          "group": {
+            "ru": "Мочка",
+            "en": "Soaker"
+          }
         },
         {
           "id": "0fb5e0e6-728d-4dd4-a8cd-512b3c2715c2",
@@ -396,7 +402,11 @@
           },
           "category": "water",
           "inputMode": "grams",
-          "value": 75
+          "value": 75,
+          "group": {
+            "ru": "Мочка",
+            "en": "Soaker"
+          }
         }
       ],
       "steps": [
@@ -619,6 +629,7 @@
         "ru": "Французская булка",
         "en": "French sourdough bun"
       },
+      "kind": "bread",
       "sourceURL": "https://www.instagram.com/reel/DV0kNGDiNDv/",
       "ingredients": [
         {
@@ -948,6 +959,258 @@
             "en": "Check with a thermometer — it should read 96–98 °C inside. Cool the bread on a rack."
           },
           "timerSeconds": null,
+          "ingredients": []
+        }
+      ]
+    },
+    {
+      "id": "e1b806d3-5d88-4974-a4a6-a1a0995df15f",
+      "name": {
+        "ru": "Печенье с коричневым маслом и шоколадом на остатках закваски",
+        "en": "Brown butter chocolate chip discard cookies"
+      },
+      "kind": "discard",
+      "ingredients": [
+        {
+          "id": "61f93618-52e8-402f-9afa-42cbe8d76811",
+          "name": {
+            "ru": "Остатки закваски",
+            "en": "Sourdough discard"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 50
+        },
+        {
+          "id": "471bb0a3-2ea4-4cb5-8bc5-798a2b173d27",
+          "name": {
+            "ru": "Сливочное масло",
+            "en": "Butter"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 60
+        },
+        {
+          "id": "7100d06e-7479-4917-826d-2157d291244e",
+          "name": {
+            "ru": "Белый сахар",
+            "en": "White sugar"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 50
+        },
+        {
+          "id": "6e6507e5-502f-4039-98d8-ac5f0d211267",
+          "name": {
+            "ru": "Коричневый сахар",
+            "en": "Brown sugar"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 30
+        },
+        {
+          "id": "d65467ab-b604-4039-b5e7-23cf815647f5",
+          "name": {
+            "ru": "Яйцо",
+            "en": "Egg"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 25
+        },
+        {
+          "id": "e0a93280-4eb1-4bff-ae65-3923930dfdfd",
+          "name": {
+            "ru": "Мука",
+            "en": "Flour"
+          },
+          "category": "flour",
+          "inputMode": "grams",
+          "value": 85
+        },
+        {
+          "id": "8f10f7c6-474f-48f1-94a3-b65837138ba0",
+          "name": {
+            "ru": "Разрыхлитель",
+            "en": "Baking powder"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 1.5
+        },
+        {
+          "id": "39cfb150-886a-48f3-990a-3b06d4e2b3e7",
+          "name": {
+            "ru": "Сода",
+            "en": "Baking soda"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 1
+        },
+        {
+          "id": "ce013608-7b9b-4f3a-8435-96fe52ca7537",
+          "name": {
+            "ru": "Соль",
+            "en": "Salt"
+          },
+          "category": "salt",
+          "inputMode": "grams",
+          "value": 1.5
+        },
+        {
+          "id": "e2dfff3a-d092-47ac-b3e7-b8732ac224d8",
+          "name": {
+            "ru": "Шоколадные капли",
+            "en": "Chocolate chips"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 60
+        }
+      ],
+      "steps": [
+        {
+          "title": {
+            "ru": "Коричневое масло",
+            "en": "Brown the butter"
+          },
+          "details": {
+            "ru": "Растопите сливочное масло в сотейнике и держите на среднем огне, постоянно помешивая. Когда масло потемнеет до цвета карамели и запахнет орехами, сразу снимите с огня, перелейте в миску и дайте чуть остыть.",
+            "en": "Melt the butter in a saucepan over medium heat, stirring all the time. Once it darkens to a caramel color and smells nutty, take it off the heat right away, pour it into a bowl and let it cool slightly."
+          },
+          "timerSeconds": null,
+          "ingredients": [
+            {
+              "ingredientId": "471bb0a3-2ea4-4cb5-8bc5-798a2b173d27",
+              "amountOverride": null
+            }
+          ]
+        },
+        {
+          "title": {
+            "ru": "Сахар, яйцо и закваска",
+            "en": "Sugar, egg and discard"
+          },
+          "details": {
+            "ru": "Всыпьте в тёплое масло оба сахара, добавьте яйцо и остатки закваски и размешайте венчиком в гладкую массу.",
+            "en": "Add both sugars to the warm butter along with the egg and the discard, and whisk into a smooth mixture."
+          },
+          "timerSeconds": null,
+          "ingredients": [
+            {
+              "ingredientId": "7100d06e-7479-4917-826d-2157d291244e",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "6e6507e5-502f-4039-98d8-ac5f0d211267",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "d65467ab-b604-4039-b5e7-23cf815647f5",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "61f93618-52e8-402f-9afa-42cbe8d76811",
+              "amountOverride": null
+            }
+          ]
+        },
+        {
+          "title": {
+            "ru": "Сухие ингредиенты",
+            "en": "Dry ingredients"
+          },
+          "details": {
+            "ru": "Добавьте муку, разрыхлитель, соду и соль и перемешайте лопаткой — только до тех пор, пока не пропадут сухие комочки муки.",
+            "en": "Add the flour, baking powder, baking soda and salt and stir with a spatula just until there are no dry pockets of flour left."
+          },
+          "timerSeconds": null,
+          "ingredients": [
+            {
+              "ingredientId": "e0a93280-4eb1-4bff-ae65-3923930dfdfd",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "8f10f7c6-474f-48f1-94a3-b65837138ba0",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "39cfb150-886a-48f3-990a-3b06d4e2b3e7",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "ce013608-7b9b-4f3a-8435-96fe52ca7537",
+              "amountOverride": null
+            }
+          ]
+        },
+        {
+          "title": {
+            "ru": "Шоколад",
+            "en": "Chocolate"
+          },
+          "details": {
+            "ru": "Всыпьте шоколадные капли и распределите их по тесту парой движений лопатки.",
+            "en": "Scatter in the chocolate chips and work them through the dough with a few turns of the spatula."
+          },
+          "timerSeconds": null,
+          "ingredients": [
+            {
+              "ingredientId": "e2dfff3a-d092-47ac-b3e7-b8732ac224d8",
+              "amountOverride": null
+            }
+          ]
+        },
+        {
+          "title": {
+            "ru": "Охлаждение",
+            "en": "Chill"
+          },
+          "details": {
+            "ru": "Уберите тесто в холодильник на 30 минут, чтобы оно стало плотнее.",
+            "en": "Put the dough in the fridge for 30 minutes to firm up."
+          },
+          "timerSeconds": 1800,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Формовка",
+            "en": "Shape"
+          },
+          "details": {
+            "ru": "Поделите тесто на 6–8 кусочков, скатайте из них шарики, выложите на противень с пергаментом и немного прижмите ладонью.",
+            "en": "Split the dough into 6–8 pieces, roll them into balls, set them on a lined baking sheet and press each one down a little with your palm."
+          },
+          "timerSeconds": null,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Выпечка",
+            "en": "Bake"
+          },
+          "details": {
+            "ru": "Пеките при 175 °C в режиме верх-низ 13–15 минут. Печенье готово, когда края зарумянились, а центр ещё слегка мягкий.",
+            "en": "Bake at 175 °C with top and bottom heat for 13–15 minutes. They're done when the edges are golden and the centers are still a little soft."
+          },
+          "timerSeconds": 900,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Остывание",
+            "en": "Cool"
+          },
+          "details": {
+            "ru": "Дайте печенью постоять на противне 5–7 минут, а потом переложите на решётку остывать.",
+            "en": "Let the cookies rest on the sheet for 5–7 minutes, then move them to a rack to cool."
+          },
+          "timerSeconds": 420,
           "ingredients": []
         }
       ]
