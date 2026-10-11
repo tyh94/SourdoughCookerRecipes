@@ -964,6 +964,175 @@
       ]
     },
     {
+      "id": "878aefb2-f5b7-42fb-bb15-9cde46f91752",
+      "name": {
+        "ru": "Белый хлеб на дрожжах",
+        "en": "White yeast bread"
+      },
+      "kind": "yeast",
+      "ingredients": [
+        {
+          "id": "ef93eda6-194e-47b1-b356-f9b0418a375a",
+          "name": {
+            "ru": "Мука пшеничная хлебопекарная",
+            "en": "Bread flour"
+          },
+          "category": "flour",
+          "inputMode": "grams",
+          "value": 500
+        },
+        {
+          "id": "4ba643d2-99a1-45f6-b515-472c413d05cb",
+          "name": {
+            "ru": "Тёплая вода",
+            "en": "Warm water"
+          },
+          "category": "water",
+          "inputMode": "grams",
+          "value": 320
+        },
+        {
+          "id": "d9b09a7d-c053-4c96-a74e-5c31be471f4b",
+          "name": {
+            "ru": "Сухие быстродействующие дрожжи",
+            "en": "Instant dry yeast"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 7
+        },
+        {
+          "id": "dd4ee7b7-2383-434b-a700-0d2562046b98",
+          "name": {
+            "ru": "Сахар",
+            "en": "Sugar"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 10
+        },
+        {
+          "id": "c03c5e14-ee45-4200-9de2-360912acde05",
+          "name": {
+            "ru": "Соль",
+            "en": "Salt"
+          },
+          "category": "salt",
+          "inputMode": "grams",
+          "value": 10
+        },
+        {
+          "id": "845ae1c0-f3f7-40a0-b305-9d594b9f2ba7",
+          "name": {
+            "ru": "Растительное масло",
+            "en": "Vegetable oil"
+          },
+          "category": "other",
+          "inputMode": "grams",
+          "value": 20
+        }
+      ],
+      "steps": [
+        {
+          "title": {
+            "ru": "Замес",
+            "en": "Mixing"
+          },
+          "details": {
+            "ru": "Смешайте муку, дрожжи и сахар. Влейте тёплую воду (35–38 °C) и перемешайте. Добавьте соль и масло и вымешивайте 8–10 минут, пока тесто не станет гладким и эластичным.",
+            "en": "Combine the flour, yeast and sugar. Pour in the warm water (35–38 °C) and stir. Add the salt and oil and knead for 8–10 minutes until the dough is smooth and elastic."
+          },
+          "timerSeconds": 600,
+          "ingredients": [
+            {
+              "ingredientId": "ef93eda6-194e-47b1-b356-f9b0418a375a",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "d9b09a7d-c053-4c96-a74e-5c31be471f4b",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "dd4ee7b7-2383-434b-a700-0d2562046b98",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "4ba643d2-99a1-45f6-b515-472c413d05cb",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "c03c5e14-ee45-4200-9de2-360912acde05",
+              "amountOverride": null
+            },
+            {
+              "ingredientId": "845ae1c0-f3f7-40a0-b305-9d594b9f2ba7",
+              "amountOverride": null
+            }
+          ]
+        },
+        {
+          "title": {
+            "ru": "Первый подъём",
+            "en": "First rise"
+          },
+          "details": {
+            "ru": "Скатайте тесто в шар, накройте и оставьте в тёплом месте, пока оно не увеличится вдвое — около часа.",
+            "en": "Shape the dough into a ball, cover and leave somewhere warm until doubled in size — about an hour."
+          },
+          "timerSeconds": 3600,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Формовка",
+            "en": "Shaping"
+          },
+          "details": {
+            "ru": "Слегка обомните тесто, сформуйте батон и уложите швом вниз в смазанную форму (около 25×11 см).",
+            "en": "Gently deflate the dough, shape it into a loaf and place it seam side down in a greased loaf tin (about 25×11 cm)."
+          },
+          "timerSeconds": null,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Расстойка",
+            "en": "Proofing"
+          },
+          "details": {
+            "ru": "Накройте форму и оставьте на 40–50 минут, пока тесто не поднимется на 1–2 см над краем. За 20 минут до конца разогрейте духовку до 200 °C.",
+            "en": "Cover the tin and leave for 40–50 minutes until the dough rises 1–2 cm above the rim. Preheat the oven to 200 °C 20 minutes before the end."
+          },
+          "timerSeconds": 2700,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Выпекание",
+            "en": "Baking"
+          },
+          "details": {
+            "ru": "Выпекайте 30–35 минут при 200 °C до золотистой корочки. Готовый хлеб глухо звучит, если постучать по дну.",
+            "en": "Bake for 30–35 minutes at 200 °C until golden. A finished loaf sounds hollow when tapped on the bottom."
+          },
+          "timerSeconds": 1800,
+          "ingredients": []
+        },
+        {
+          "title": {
+            "ru": "Остывание",
+            "en": "Cooling"
+          },
+          "details": {
+            "ru": "Выньте хлеб из формы и остудите на решётке не меньше часа, прежде чем резать.",
+            "en": "Take the loaf out of the tin and let it cool on a rack for at least an hour before slicing."
+          },
+          "timerSeconds": 3600,
+          "ingredients": []
+        }
+      ]
+    },
+    {
       "id": "e1b806d3-5d88-4974-a4a6-a1a0995df15f",
       "name": {
         "ru": "Печенье с коричневым маслом и шоколадом на остатках закваски",
